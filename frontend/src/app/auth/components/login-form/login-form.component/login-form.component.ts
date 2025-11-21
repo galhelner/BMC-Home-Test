@@ -36,7 +36,7 @@ export class LoginFormComponent implements OnInit {
 
     if (userFound) {
       console.log('Login successful');
-      this.authService.login('dummy-token');
+      this.authService.login('dummy-token', email);
     } else {
       console.log('Invalid email or password');
       alert('Invalid email or password');

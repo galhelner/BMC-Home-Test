@@ -4,6 +4,7 @@ import { User } from '../models/user';
 import { AbstractControl } from '@angular/forms';
 
 const AUTH_TOKEN_KEY = 'auth_token'; // Key for localStorage
+const AUTH_USER_KEY = 'auth_user'; // Key for storing authenticated user
 const REGISTERED_USERS_KEY = 'registeredUsers'; // Key for localStorage of users
 
 @Injectable({
@@ -26,8 +27,9 @@ export class AuthService {
     /**
      * Logs in the user by saving the token and redirecting.
      */
-    login(token: string): void {
+    login(token: string, username: string): void {
         localStorage.setItem(AUTH_TOKEN_KEY, token);
+        localStorage.setItem(AUTH_USER_KEY, username);
         this.router.navigate(['/dashboard']);
     }
 
@@ -40,6 +42,10 @@ export class AuthService {
 
         // Redirect to the login page
         this.router.navigate(['/login']);
+    }
+
+    getAuthenticatedUser(): string | null {
+        return localStorage.getItem(AUTH_USER_KEY);
     }
 
     /**
@@ -72,7 +78,7 @@ export class AuthService {
         existingUsers.push(newUser);
         this.saveAllUsers(existingUsers);
         console.log(`User ${newUser.email} registered successfully`);
-        this.login('dummy-token'); // Auto-login after registration
+        this.login('dummy-token', newUser.email); // Auto-login after registration
     }
 
     /**

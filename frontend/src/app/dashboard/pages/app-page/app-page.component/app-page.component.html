@@ -1,8 +1,11 @@
 <nav>
     <div class="nav-bar">
+        <a routerLink="/" class="nav-link">
+            <i class="fa-solid fa-house"></i>
+        </a>
         <a routerLink="products" class="nav-link">Products</a>
         <a routerLink="cart" class="nav-link">Cart</a>
-        <h1 class="nav-username">User</h1>
+        <h1 class="nav-username">{{ authenticatedUser }}</h1>
     </div>
 </nav>
 <router-outlet></router-outlet>
