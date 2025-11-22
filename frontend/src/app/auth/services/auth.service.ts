@@ -1,5 +1,4 @@
 import { Injectable } from '@angular/core';
-import { Router } from '@angular/router';
 import { User } from '../models/user';
 import { AbstractControl } from '@angular/forms';
 import * as bcrypt from 'bcryptjs';
@@ -15,7 +14,7 @@ const SALT_ROUNDS = 10; // Number of salt rounds for bcrypt
 })
 export class AuthService {
 
-    constructor(private router: Router) { }
+    constructor() { }
 
     /**
      * Checks if the user is currently authenticated.

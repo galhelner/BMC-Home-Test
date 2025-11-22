@@ -1,6 +1,7 @@
 import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Product } from '../../../models/product';
 import { CommonModule } from '@angular/common';
+import { ProductsService } from '../../../services/products.service';
 
 @Component({
   selector: 'product-card',
@@ -12,9 +13,10 @@ import { CommonModule } from '@angular/common';
 export class ProductCardComponent {
   @Input() product!: Product;
 
+  constructor(private productsService: ProductsService) {}
+
   addToCart() {
-    // Logic to add the product to the cart
-    // TODO: Store the product in the cart in local storage
     console.log(`Product ${this.product.name} added to cart.`);
+    this.productsService.addProductToCart(this.product);
   }
 }
