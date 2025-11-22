@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { RouterLink, Router } from '@angular/router';
 import { AuthService } from '../../../services/auth.service';
 
 @Component({
@@ -14,7 +14,7 @@ import { AuthService } from '../../../services/auth.service';
 export class LoginFormComponent implements OnInit {
   loginForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.loginForm = this.fb.group({
@@ -23,7 +23,7 @@ export class LoginFormComponent implements OnInit {
     });
   }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       console.log('Form is invalid');
@@ -31,16 +31,13 @@ export class LoginFormComponent implements OnInit {
     }
 
     const { email, password } = this.loginForm.value;
-    const registeredUsers = this.authService.getAllUsers();
-    const userFound = registeredUsers.find(user => user.email === email && user.password === password);
+    const user = { email, password };
+    const result = await this.authService.login(user);
 
-    if (userFound) {
-      console.log('Login successful');
-      this.authService.login('dummy-token', email);
+    if (result) {
+      this.router.navigate(['/dashboard']);
     } else {
-      console.log('Invalid email or password');
       alert('Invalid email or password');
-      this.loginForm.reset();
     }
   }
 }

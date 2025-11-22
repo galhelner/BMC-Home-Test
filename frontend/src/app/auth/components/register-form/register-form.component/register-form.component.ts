@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { ReactiveFormsModule, FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { User } from '../../../models/user';
 import { AuthService } from '../../../services/auth.service';
+import { Router } from '@angular/router';
 
 @Component({
   selector: 'register-form',
@@ -14,7 +15,7 @@ import { AuthService } from '../../../services/auth.service';
 export class RegisterFormComponent implements OnInit {
   registerForm!: FormGroup;
 
-  constructor(private fb: FormBuilder, private authService: AuthService) {}
+  constructor(private fb: FormBuilder, private authService: AuthService, private router: Router) {}
 
   ngOnInit(): void {
     this.registerForm = this.fb.group({
@@ -36,13 +37,18 @@ export class RegisterFormComponent implements OnInit {
   // Getter for easy access to form fields
   get f() { return this.registerForm.controls; }
 
-  onSubmit(): void {
+  async onSubmit(): Promise<void> {
     if (this.registerForm.valid) {
       const user: User = {
         email: this.f['email'].value,
         password: this.f['password'].value
       }
-      this.authService.registerNewUser(user);
+      const result = await this.authService.registerNewUser(user);
+      if (result) {
+        this.router.navigate(['/dashboard']);
+      } else {
+        alert('A user with this email is already exists!');
+      }
     } else {
       this.registerForm.markAllAsTouched();
       console.log('Form is invalid');

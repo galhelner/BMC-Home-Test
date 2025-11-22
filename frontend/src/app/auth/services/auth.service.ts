@@ -2,10 +2,12 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import { User } from '../models/user';
 import { AbstractControl } from '@angular/forms';
+import * as bcrypt from 'bcryptjs';
 
 const AUTH_TOKEN_KEY = 'auth_token'; // Key for localStorage
 const AUTH_USER_KEY = 'auth_user'; // Key for storing authenticated user
 const REGISTERED_USERS_KEY = 'registeredUsers'; // Key for localStorage of users
+const SALT_ROUNDS = 10; // Number of salt rounds for bcrypt
 
 @Injectable({
     // makes the service a singleton accessible everywhere
@@ -27,10 +29,20 @@ export class AuthService {
     /**
      * Logs in the user by saving the token and redirecting.
      */
-    login(token: string, username: string): void {
-        localStorage.setItem(AUTH_TOKEN_KEY, token);
-        localStorage.setItem(AUTH_USER_KEY, username);
-        this.router.navigate(['/dashboard']);
+    async login(user: User): Promise<boolean> {
+        const registeredUsers = this.getAllUsers();
+        const userFound = registeredUsers.find(async u => {
+            const passwordMatch = await bcrypt.compare(user.password, u.password);
+            return u.email === user.email && passwordMatch;
+        });
+
+        if (userFound) {
+            localStorage.setItem(AUTH_TOKEN_KEY, 'dummy-token');
+            localStorage.setItem(AUTH_USER_KEY, user.email);
+            return true;
+        } else {
+            return false;
+        }
     }
 
     /**
@@ -69,16 +81,22 @@ export class AuthService {
      * register a new user
      * @param newUser - user to be registered
      */
-    registerNewUser(newUser: User): void {
+    async registerNewUser(newUser: User): Promise<boolean> {
         const existingUsers = this.getAllUsers();
         if (existingUsers.find(user => user.email === newUser.email)) {
-            alert('A user with this email is already exists!');
-            return;
+            return false;
         }
+
+        // Hash the password before storing
+        const hashedPassword = await bcrypt.hash(newUser.password, SALT_ROUNDS);
+        newUser.password = hashedPassword;
+
+        // Store the new user
         existingUsers.push(newUser);
         this.saveAllUsers(existingUsers);
         console.log(`User ${newUser.email} registered successfully`);
-        this.login('dummy-token', newUser.email); // Auto-login after registration
+        await this.login(newUser); // Auto-login after registration
+        return true;
     }
 
     /**
