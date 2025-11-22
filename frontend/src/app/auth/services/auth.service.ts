@@ -31,29 +31,32 @@ export class AuthService {
      */
     async login(user: User): Promise<boolean> {
         const registeredUsers = this.getAllUsers();
-        const userFound = registeredUsers.find(async u => {
-            const passwordMatch = await bcrypt.compare(user.password, u.password);
-            return u.email === user.email && passwordMatch;
-        });
 
-        if (userFound) {
-            localStorage.setItem(AUTH_TOKEN_KEY, 'dummy-token');
-            localStorage.setItem(AUTH_USER_KEY, user.email);
-            return true;
-        } else {
-            return false;
+        // Iterate over users synchronously
+        for (const u of registeredUsers) {
+            // Check email first for efficiency
+            if (u.email === user.email) {
+                const passwordMatch = await bcrypt.compare(user.password, u.password);
+
+                if (passwordMatch) {
+                    // User found and password matches!
+                    localStorage.setItem(AUTH_TOKEN_KEY, 'dummy-token');
+                    localStorage.setItem(AUTH_USER_KEY, user.email);
+                    return true;
+                }
+                break;
+            }
         }
+        return false;
     }
 
     /**
      * Exits the user session.
      */
     logout(): void {
-        // Remove the token from storage
+        // Remove the token and authenticated username from storage
         localStorage.removeItem(AUTH_TOKEN_KEY);
-
-        // Redirect to the login page
-        this.router.navigate(['/login']);
+        localStorage.removeItem(AUTH_USER_KEY);
     }
 
     getAuthenticatedUser(): string | null {
