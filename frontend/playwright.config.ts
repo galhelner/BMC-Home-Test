@@ -14,10 +14,19 @@ export default defineConfig({
   },
   
   // Configure the web server to run before tests start
-  webServer: {
+  webServer: [
+  {
     command: 'npx ng serve', // The command to start your Angular app
     url: 'http://localhost:4200',
     timeout: 120 * 1000, // Wait up to 120 seconds for the server to start
     reuseExistingServer: !process.env.CI, // Don't reuse on CI
+    name: 'Frontend'
   },
+  {
+    command: 'cd ../backend && npm start',
+    url: 'http://localhost:3000/health',
+    timeout: 120 * 1000,
+    reuseExistingServer: !process.env.CI,
+    name: 'Backend'
+  }]
 });

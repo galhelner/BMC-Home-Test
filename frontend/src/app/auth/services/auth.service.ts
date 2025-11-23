@@ -2,12 +2,19 @@ import { Injectable } from '@angular/core';
 import { User } from '../models/user';
 import { AbstractControl } from '@angular/forms';
 import * as bcrypt from 'bcryptjs';
+import { HttpClient, HttpErrorResponse } from '@angular/common/http';
+import { catchError, map, Observable, throwError } from 'rxjs';
+import { AuthPayload } from '../models/auth.payload';
+import { AuthResponse } from '../models/auth.response';
 
 const AUTH_TOKEN_KEY = 'auth_token'; // Key for localStorage
 const AUTH_USER_KEY = 'auth_user'; // Key for storing authenticated user
 const REGISTERED_USERS_KEY = 'registeredUsers'; // Key for localStorage of users
 const CART_ITEMS_KEY = 'cart_items'; // Key for localStorage of cart items
 const SALT_ROUNDS = 10; // Number of salt rounds for bcrypt
+const BASE_URL = 'http://localhost:3000'; // Backend server base url
+const REGISTER_URL = BASE_URL + '/auth/register';
+const LOGIN_URL = BASE_URL + '/auth/login';
 
 @Injectable({
     // makes the service a singleton accessible everywhere
@@ -15,7 +22,7 @@ const SALT_ROUNDS = 10; // Number of salt rounds for bcrypt
 })
 export class AuthService {
 
-    constructor() { }
+    constructor(private http: HttpClient) { }
 
     /**
      * Checks if the user is currently authenticated.
@@ -27,27 +34,44 @@ export class AuthService {
     }
 
     /**
-     * Logs in the user by saving the token and redirecting.
+     * Call backend API to login the user.
      */
-    async login(user: User): Promise<boolean> {
-        const registeredUsers = this.getAllUsers();
+    login(payload: AuthPayload): Observable<string> {
+        return this.http.post<AuthResponse>(LOGIN_URL, payload).pipe(
+            map((response) => {
+                localStorage.setItem(AUTH_TOKEN_KEY, response.token);
+                return response.token;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                console.error('Login API error:', error);
 
-        // Iterate over users synchronously
-        for (const u of registeredUsers) {
-            // Check email first for efficiency
-            if (u.email === user.email) {
-                const passwordMatch = await bcrypt.compare(user.password, u.password);
-
-                if (passwordMatch) {
-                    // User found and password matches!
-                    localStorage.setItem(AUTH_TOKEN_KEY, 'dummy-token');
-                    localStorage.setItem(AUTH_USER_KEY, user.email);
-                    return true;
+                if (error.status === 401) {
+                    return throwError(() => new Error(error.error?.message || 'Invalid email or password.'));
                 }
-                break;
-            }
-        }
-        return false;
+
+                return throwError(() => new Error('Could not log in due to a server error.'));
+            })
+        );
+    }
+
+    /**
+     * Call backend API to register a new user.
+     */
+    register(payload: AuthPayload): Observable<string> {
+        return this.http.post<AuthResponse>(REGISTER_URL, payload).pipe(
+            map((response) => {
+                localStorage.setItem(AUTH_TOKEN_KEY, response.token);
+                return response.token;
+            }),
+            catchError((error: HttpErrorResponse) => {
+                console.error('Registration API error:', error);
+
+                if (error.status === 400) {
+                    return throwError(() => new Error(error.error?.message || 'User already exists.'));
+                }
+                return throwError(() => new Error('Could not register due to a server error.'));
+            })
+        );
     }
 
     /**

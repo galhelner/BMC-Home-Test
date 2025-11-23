@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
+const bcryptjs = require('bcryptjs');
 const { getDB } = require('../../config/db');
+
+const SALT_ROUNDS = 10; // Number of salt rounds for bcrypt
 
 // --- Helper Function: Generate JWT Token ---
 const generateToken = (userId) => {
@@ -15,18 +18,32 @@ const generateToken = (userId) => {
     );
 };
 
-exports.findUserByEmail = async (email) => {
+const findUserByEmail = async (email) => {
     const db = getDB();
-    return db.get('SELECT * FROM users WHERE email = ?', [email]);
+    return await db.get('SELECT * FROM users WHERE email = ?', [email]);
 };
+
+exports.findUserByEmail = findUserByEmail; // Export the function
 
 exports.findUserById = async (id) => {
     const db = getDB();
-    return db.get('SELECT id, email, date FROM users WHERE id = ?', [id]);
+    return await db.get('SELECT id, email, date FROM users WHERE id = ?', [id]);
 };
 
-exports.createUser = async (email, hashedPassword) => {
+exports.authenticateUser = async (email, password) => {
+    const user = await this.findUserByEmail(email);
+
+    if (!user) {
+        return false;
+    }
+
+    return await bcryptjs.compare(password, user.password);
+}
+
+exports.createUser = async (email, password) => {
     const db = getDB();
+
+    const hashedPassword = await bcryptjs.hash(password, SALT_ROUNDS);
     const result = await db.run(
         'INSERT INTO users (email, password) VALUES (?, ?)',
         [email, hashedPassword]

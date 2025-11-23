@@ -23,7 +23,7 @@ export class LoginFormComponent implements OnInit {
     });
   }
 
-  async onSubmit(): Promise<void> {
+  onSubmit(): void {
     if (this.loginForm.invalid) {
       this.loginForm.markAllAsTouched();
       console.log('Form is invalid');
@@ -31,13 +31,13 @@ export class LoginFormComponent implements OnInit {
     }
 
     const { email, password } = this.loginForm.value;
-    const user = { email, password };
-    const result = await this.authService.login(user);
-
-    if (result) {
-      this.router.navigate(['/dashboard']);
-    } else {
-      alert('Invalid email or password');
-    }
+    this.authService.login({ email, password }).subscribe({
+      next: (token) => {
+        this.router.navigate(['/dashboard']);
+      },
+      error: (err: Error) => {
+        alert(err.message);
+      }
+    });
   }
 }
