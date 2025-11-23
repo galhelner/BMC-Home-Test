@@ -3,7 +3,7 @@
 
     <div *ngIf="!cartItems || cartItems.length === 0" class="empty-cart-message">
         <p>Your cart is looking a little empty...</p>
-        <a routerLink="/products" class="continue-shopping-button">Continue Shopping</a>
+        <a routerLink="/dashboard/products" class="continue-shopping-button">Continue Shopping</a>
     </div>
 
     <div *ngIf="cartItems.length > 0" class="main-cart-layout">
