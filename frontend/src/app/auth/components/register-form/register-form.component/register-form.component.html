@@ -1,0 +1,50 @@
+<form [formGroup]="registerForm" (ngSubmit)="onSubmit()">
+    <div class="container">
+        <h1 class="title">Sign Up</h1>
+
+        <div class="input-section">
+
+            <div class="field-group">
+                <div *ngIf="f['email'].invalid && f['email'].touched && f['email'].dirty" class="validation-message">
+                    <div *ngIf="f['email'].errors && f['email'].errors['required']">Email is required.</div>
+                    <div *ngIf="f['email'].errors && f['email'].errors['email']">Please enter a valid email address.</div>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-envelope icon"></i>
+                    <input formControlName="email" id="emailInput" type="email" class="input-field"
+                        placeholder="Your email" />
+                </div>
+            </div>
+
+            <div class="field-group">
+                <div *ngIf="f['password'].invalid && f['password'].touched && f['password'].dirty" class="validation-message">
+                    <div *ngIf="f['password'].errors && f['password'].errors['required']">Password is required.</div>
+                    <div *ngIf="f['password'].errors && f['password'].errors['minlength']">Password must be at least 6 characters long.</div>
+                    <div *ngIf="f['password'].errors && f['password'].errors['hasCapital']">Password must contain at least 1 capital letter.</div>
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock icon"></i>
+                    <input formControlName="password" id="passwordInput" type="password" class="input-field"
+                        placeholder="Password" />
+                </div>
+            </div>
+
+            <div class="field-group">
+                <div *ngIf="f['confirmPassword'].touched && f['confirmPassword'].dirty && registerForm.hasError('mismatch')" class="validation-message">
+                    Passwords do not match.
+                </div>
+                <div class="input-group">
+                    <i class="fas fa-lock icon"></i>
+                    <input formControlName="confirmPassword" id="confirmPasswordInput" type="password" class="input-field"
+                        placeholder="Confirm Password" />
+                </div>
+            </div>
+            
+        </div>
+
+        <button type="submit" class="submit-button" [disabled]="registerForm.invalid">
+            Register
+        </button>
+
+    </div>
+</form>

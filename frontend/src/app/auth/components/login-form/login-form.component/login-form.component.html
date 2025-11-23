@@ -1,0 +1,31 @@
+<form [formGroup]="loginForm" (ngSubmit)="onSubmit()">
+    <div class="container">
+        <!-- Header -->
+        <h1 class="title">Sign In</h1>
+
+        <!-- User's Input Section -->
+        <div class="input-section">
+            <!-- Input -->
+            <div class="input-group">
+                <i class="fas fa-envelope icon"></i>
+                <input formControlName="email" id="emailInput" type="email" class="input-field"
+                    placeholder="Your email" />
+            </div>
+
+            <!-- Input -->
+            <div class="input-group">
+                <i class="fas fa-lock icon"></i>
+                <input formControlName="password" id="passwordInput" type="password" class="input-field"
+                    placeholder="Password" />
+            </div>
+        </div>
+
+        <!-- Login Button -->
+        <button type="submit" class="submit-button" [disabled]="loginForm.invalid">
+            Log in
+        </button>
+
+        <!-- Register link -->
+        <a routerLink="/auth/register" class="register-link"> Create an account </a>
+    </div>
+</form>

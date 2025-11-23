@@ -1,0 +1,16 @@
+<nav>
+    <div class="nav-bar">
+        <a routerLink="/" class="nav-link">
+            <i class="fa-solid fa-house"></i>
+        </a>
+        <a routerLink="products" class="nav-link">Products</a>
+        <a routerLink="cart" class="nav-link">Cart</a>
+        <div class="nav-profile">
+            <h1 class="nav-username">{{ authenticatedUser }}</h1>
+            <button class="nav-link nav-logout-button" type="button" id="logoutButton" title="Logout Button" (click)="logout()">
+                <i class="fa-solid fa-right-from-bracket"></i>
+            </button>
+        </div>
+    </div>
+</nav>
+<router-outlet></router-outlet>

@@ -1,0 +1,16 @@
+<div class="product-card">
+  <img 
+    [src]="product.imageUrl" 
+    [alt]="product.name || 'Product Image'" 
+    title="Product Image Preview"
+  />
+  
+  <div class="card-content">
+    <h3>{{ product.name }}</h3> 
+    
+    <div class="card-actions">
+      <p class="product-price">${{ product.price | number:'1.2-2' }}</p>
+      <button (click)="addToCart()">Add to Cart</button>
+    </div>
+  </div>
+</div>
