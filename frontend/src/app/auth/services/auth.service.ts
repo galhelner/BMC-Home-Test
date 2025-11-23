@@ -91,6 +91,12 @@ export class AuthService {
             return false;
         }
 
+        // store the new user for future logins
+        const userForLogin: User = {
+            email: newUser.email,
+            password: newUser.password
+        };
+
         // Hash the password before storing
         const hashedPassword = await bcrypt.hash(newUser.password, SALT_ROUNDS);
         newUser.password = hashedPassword;
@@ -99,7 +105,7 @@ export class AuthService {
         existingUsers.push(newUser);
         this.saveAllUsers(existingUsers);
         console.log(`User ${newUser.email} registered successfully`);
-        await this.login(newUser); // Auto-login after registration
+        await this.login(userForLogin); // Auto-login after registration
         return true;
     }
 
