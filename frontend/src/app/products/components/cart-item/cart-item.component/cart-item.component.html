@@ -1,0 +1,37 @@
+<div class="cart-item">
+    <div class="item-image">
+        <img [src]="item.product.imageUrl" [alt]="item.product.name" title="Cart Item Image">
+    </div>
+
+    <div class="item-details">
+        <h4 class="item-name">{{ item.product.name }}</h4>
+        <p class="unit-price">Unit Price: {{ item.product.price | currency:'USD':'symbol' }}</p>
+    </div>
+
+    <div class="item-quantity">
+        <label [for]="'quantity-' + item.product.id">Quantity:</label>
+        <div class="quantity-input-group">
+            <button class="quantity-button" (click)="updateQuantity(-1)" [disabled]="item.quantity <= 1">-</button>
+            <input 
+                type="number" 
+                [id]="'quantity-' + item.product.id"
+                [value]="item.quantity" 
+                min="1"
+                (change)="onQuantityInputChange($event)"
+                aria-label="Item quantity"
+            >
+            <button class="quantity-button" (click)="updateQuantity(1)">+</button>
+        </div>
+    </div>
+
+    <div class="item-subtotal">
+        <p class="subtotal-label">Subtotal</p>
+        <p class="subtotal-value">
+            {{ (item.product.price * item.quantity) | currency:'USD':'symbol' }}
+        </p>
+    </div>
+
+    <button class="remove-button" (click)="removeItem.emit(item.product.id)" title="Remove item">
+        <svg xmlns="http://www.w3.org/2000/svg" height="24" viewBox="0 0 24 24" width="24"><path d="M0 0h24v24H0z" fill="none"/><path d="M6 19c0 1.1.9 2 2 2h8c1.1 0 2-.9 2-2V7H6v12zm2.46-7.12l1.41-1.41L12 12.59l2.12-2.12 1.41 1.41L13.41 14l2.12 2.12-1.41 1.41L12 15.41l-2.12 2.12-1.41-1.41L10.59 14l-2.13-2.12zM15.5 4l-.71-.71L14 3.59V3h-4v.59l-.79-.3L8.5 4H6v2h12V4h-2.5z"/></svg>
+    </button>
+</div>

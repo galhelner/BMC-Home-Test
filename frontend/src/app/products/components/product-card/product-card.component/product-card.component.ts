@@ -2,6 +2,7 @@ import { Component, Input, ChangeDetectionStrategy } from '@angular/core';
 import { Product } from '../../../models/product';
 import { CommonModule } from '@angular/common';
 import { ProductsService } from '../../../services/products.service';
+import { ToastrService } from 'ngx-toastr';
 
 @Component({
   selector: 'product-card',
@@ -13,10 +14,14 @@ import { ProductsService } from '../../../services/products.service';
 export class ProductCardComponent {
   @Input() product!: Product;
 
-  constructor(private productsService: ProductsService) {}
+  constructor(private productsService: ProductsService, private toastr: ToastrService) {}
 
   addToCart() {
-    console.log(`Product ${this.product.name} added to cart.`);
     this.productsService.addProductToCart(this.product);
+    
+    this.toastr.success(
+      `${this.product.name} has been added to your cart.`, 
+      'Added to Cart',
+    );
   }
 }

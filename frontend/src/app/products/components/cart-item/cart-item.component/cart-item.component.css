@@ -1,0 +1,143 @@
+.cart-item {
+    display: flex;
+    align-items: center; 
+    padding: 15px 0;
+    border-bottom: 1px solid #eee;
+    background-color: #fff;
+    transition: background-color 0.2s;
+}
+
+.cart-item:hover {
+    background-color: #f9f9f9;
+}
+
+.item-image {
+    flex-shrink: 0;
+    width: 80px;
+    height: 80px;
+    margin-right: 20px;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.item-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.item-details {
+    flex-grow: 1;
+    min-width: 150px;
+}
+
+.item-name {
+    margin: 0 0 8px 0;
+    font-size: 1.2em;
+    color: #333;
+    font-weight: 600;
+}
+
+.unit-price {
+    font-size: 0.9em;
+    color: #888;
+    margin: 0;
+}
+
+.item-quantity {
+    text-align: center;
+    width: 120px; 
+    margin: 0 20px;
+}
+
+.quantity-input-group {
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
+}
+
+.quantity-button {
+    background-color: #f1f1f1;
+    border: 1px solid #ddd;
+    padding: 5px 10px;
+    cursor: pointer;
+    font-weight: bold;
+    font-size: 1em;
+    line-height: 1;
+    width: 30px;
+    height: 30px;
+    box-sizing: border-box;
+    transition: background-color 0.2s;
+}
+
+.quantity-button:hover:not([disabled]) {
+    background-color: #e5e5e5;
+}
+
+.quantity-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.6;
+}
+
+.quantity-button:first-child {
+    border-right: none;
+    border-radius: 4px 0 0 4px;
+}
+
+.quantity-button:last-child {
+    border-left: none;
+    border-radius: 0 4px 4px 0;
+}
+
+.quantity-input-group input {
+    width: 40px;
+    height: 30px;
+    text-align: center;
+    border: 1px solid #ddd;
+    border-radius: 0;
+}
+.quantity-input-group input::-webkit-outer-spin-button,
+.quantity-input-group input::-webkit-inner-spin-button {
+    -webkit-appearance: none;
+    margin: 0;
+}
+
+.item-subtotal {
+    width: 100px;
+    text-align: right;
+    margin-left: 20px;
+    font-size: 1.1em;
+    font-weight: 700;
+}
+
+.subtotal-label {
+    font-size: 0.8em;
+    color: #666;
+    margin-bottom: 2px;
+}
+
+.subtotal-value {
+    margin: 0;
+    color: #007bff;
+}
+
+.remove-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #999;
+    margin-left: 15px;
+    padding: 5px;
+    transition: color 0.2s;
+}
+
+.remove-button:hover {
+    color: #dc3545;
+}
+
+.remove-button svg {
+    fill: currentColor;
+    width: 24px;
+    height: 24px;
+}
