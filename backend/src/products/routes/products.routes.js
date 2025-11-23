@@ -8,8 +8,10 @@ router.use('/', authenticateToken);
 // return all available products
 router.get('/', productController.getProducts);
 
+router.put('/cart', productController.updateCart);
+
 // return all cart items for a specific user by id
-router.get('/cart:user_id', productController.getCartItems);
+router.get('/cart', productController.getCartItems);
 
 // add a product to cart by product_id and user_id
 router.post('/cart', productController.addProductToCart);
@@ -17,7 +19,6 @@ router.post('/cart', productController.addProductToCart);
 // delete a product from a cart by product_id and user_id
 router.delete('/cart', productController.deleteProductFromCart);
 
-// increment product quantity by product_id and user_id
-router.post('/cart/increment', productController.incrementQuantity);
+router.post('/cart/decrement', productController.decrementQuantity);
 
 module.exports = router;

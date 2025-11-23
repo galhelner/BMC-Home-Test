@@ -1,50 +1,55 @@
-<div class="cart-page-container">
-    <h2>🛍️ Your Shopping Cart</h2>
+<ng-container *ngIf="cartItems$ | async as cartItems; else loadingState">
+    
+    <div class="cart-page-container">
+        <h2>🛍️ Your Shopping Cart</h2>
 
-    <div *ngIf="!cartItems || cartItems.length === 0" class="empty-cart-message">
-        <p>Your cart is looking a little empty...</p>
-        <a routerLink="/dashboard/products" class="continue-shopping-button">Continue Shopping</a>
-    </div>
-
-    <div *ngIf="cartItems.length > 0" class="main-cart-layout">
-        
-        <div class="cart-items-column">
-            <div class="cart-header">
-                <span class="header-product">Product</span>
-                <span class="header-unit-price">Unit Price</span>
-                <span class="header-quantity">Quantity</span>
-                <span class="header-subtotal">Subtotal</span>
-            </div>
-            
-            <cart-item
-                *ngFor="let item of cartItems; trackBy: trackByProductId"
-                [item]="item"
-                (quantityChange)="updateItemQuantity($event)"
-                (removeItem)="deleteItem(item.product.id)">
-            </cart-item>
-            </div>
-
-        <div class="cart-summary-column">
-            <div class="order-summary-box">
-                <h3>Order Summary</h3>
-                <div class="summary-line">
-                    <span>Subtotal ({{ totalItems }} items)</span>
-                    <span>{{ cartSubtotal | currency:'USD':'symbol' }}</span>
-                </div>
-                <div class="summary-line">
-                    <span>Shipping Estimate</span>
-                    <span>{{ shippingCost | currency:'USD':'symbol' }}</span>
-                </div>
-                <div class="summary-line total-line">
-                    <strong>Estimated Total</strong>
-                    <strong>{{ cartTotal | currency:'USD':'symbol' }}</strong>
-                </div>
-
-                <button class="checkout-button">
-                    Proceed to Checkout
-                </button>
-            </div>
+        <div *ngIf="cartItems.length === 0" class="empty-cart-message">
+            <p>Your cart is looking a little empty...</p>
+            <a routerLink="/dashboard/products" class="continue-shopping-button">Continue Shopping</a>
         </div>
 
+        <div *ngIf="cartItems.length > 0" class="main-cart-layout">
+            
+            <div class="cart-items-column">
+                <cart-item
+                    *ngFor="let item of cartItems; trackBy: trackByProductId"
+                    [item]="item"
+                    (quantityChange)="updateItemQuantity($event)"
+                    (removeItem)="deleteItem(item.product.id)">
+                </cart-item>
+            </div>
+
+            <div class="cart-summary-column">
+                <div class="order-summary-box">
+                    <h3>Order Summary</h3>
+                    
+                    <div class="summary-line">
+                        <span>Subtotal ({{ totalItems$ | async }} items)</span>
+                        <span>{{ cartSubtotal$ | async | currency:'USD':'symbol' }}</span>
+                    </div>
+                    
+                    <div class="summary-line">
+                        <span>Shipping Estimate</span>
+                        <span>{{ shippingCost | currency:'USD':'symbol' }}</span>
+                    </div>
+                    
+                    <div class="summary-line total-line">
+                        <strong>Estimated Total</strong>
+                        <span>{{ cartTotal$ | async | currency:'USD':'symbol' }}</span>
+                    </div>
+
+                    <button class="checkout-button">
+                        Proceed to Checkout
+                    </button>
+                </div>
+            </div>
+
+        </div>
     </div>
-</div>
+</ng-container>
+
+<ng-template #loadingState>
+  <div class="loading-message">
+    <p>⏳ Loading products...</p>
+  </div>
+</ng-template>
