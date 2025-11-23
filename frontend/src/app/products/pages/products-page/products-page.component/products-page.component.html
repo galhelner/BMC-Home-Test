@@ -1,11 +1,20 @@
-<div class="product-grid-container">
+<ng-container *ngIf="products$ | async as products; else loadingState">
   
-  <product-card 
-    *ngFor="let product of products"
-    [product]="product"> </product-card>
+  <div class="product-grid-container">
+    <product-card 
+      *ngFor="let product of products"
+      [product]="product">
+    </product-card>
+  </div>
 
-</div>
+  <div *ngIf="products.length === 0" class="no-products-message">
+    <p>No products found at the moment.</p>
+  </div>
 
-<div *ngIf="products.length === 0" class="no-products-message">
-  <p>No products found at the moment.</p>
-</div>
+</ng-container>
+
+<ng-template #loadingState>
+  <div class="loading-message">
+    <p>⏳ Loading products...</p>
+  </div>
+</ng-template>

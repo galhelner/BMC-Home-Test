@@ -3,7 +3,7 @@ import { User } from '../models/user';
 import { AbstractControl } from '@angular/forms';
 import * as bcrypt from 'bcryptjs';
 import { HttpClient, HttpErrorResponse } from '@angular/common/http';
-import { catchError, map, Observable, throwError } from 'rxjs';
+import { catchError, map, Observable, throwError, of } from 'rxjs';
 import { AuthPayload } from '../models/auth.payload';
 import { AuthResponse } from '../models/auth.response';
 
@@ -31,6 +31,11 @@ export class AuthService {
     isAuthenticated(): boolean {
         const token = localStorage.getItem(AUTH_TOKEN_KEY);
         return !!token;
+    }
+
+    getAuthToken(): Observable<string | null> {
+         const token = localStorage.getItem(AUTH_TOKEN_KEY);
+         return of(token);
     }
 
     /**
