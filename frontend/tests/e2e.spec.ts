@@ -7,6 +7,7 @@ const PRODUCT_NAME = 'Basketball'; // A product assumed to exist in the product 
 
 const REGISTER_URL = '/auth/register';
 const LOGIN_URL = '/auth/login';
+const DASHBOARD_URL = '/dashboard';
 
 // helper function to register a new user
 async function registerUser(page: Page) {
@@ -37,6 +38,7 @@ async function logout(page: Page) {
 
 test.describe('Full User Journey E2E Test', () => {
 
+    // Successful case - Everything is valid!
     test('Successful Case: Should register, log in, add product to cart, and view cart', async ({ page }) => {
 
         // --- 1. REGISTRATION & INITIAL LOGIN ---
@@ -115,6 +117,7 @@ test.describe('Full User Journey E2E Test', () => {
         });
     });
 
+    // Fail case 1 - Attempt to register an existing user
     test('Fail Case 1: Should fail to register an existing user', async ({ page }) => {
         await test.step('Register the test user successfully first', async () => {
             await registerUser(page);
@@ -154,6 +157,51 @@ test.describe('Full User Journey E2E Test', () => {
 
             // Ensure the app did NOT navigate to the dashboard
             await expect(page).not.toHaveURL(/.*\/dashboard/);
+        });
+    });
+
+    // Fail case 2 - Attempt to login to non-existing user
+    test('Fail Case 2: Should fail to login to non-existing user', async ({ page }) => {
+        // Set up a dialog listener
+        let alertMessage = '';
+        page.on('dialog', async (dialog) => {
+            alertMessage = dialog.message();
+            await dialog.dismiss();
+        });
+
+        // start of test -> no user is registered
+        await test.step('Attempt to login to non-existing user', async () => {
+             // Navigate to login page
+            await page.goto(LOGIN_URL);
+            await expect(page.locator('h1:has-text("Sign In")')).toBeVisible();
+
+            // fill login fields
+            await page.locator('#emailInput').fill(TEST_USER_EMAIL);
+            await page.locator('#passwordInput').fill(TEST_PASSWORD);
+
+            // click login button
+            await page.getByRole('button', { name: 'Log in' }).click();
+
+            // Check that the captured message matches the expected message from the component
+            const EXPECTED_MESSAGE = 'Invalid email or password';
+            await expect(alertMessage).toBe(EXPECTED_MESSAGE);
+
+            // Ensure the app did NOT navigate to the dashboard
+            await expect(page).not.toHaveURL(/.*\/dashboard/);
+        });
+    });
+
+    // Fail case 3 - Trying to navigate to secure page without being authenticated
+    test('Fail Case 3: Should fail to navigate the dashboard page without login', async ({ page }) => {
+        await test.step('Trying to navigate to dashboard without login', async () => {
+            // Navigate to dashboard
+            await page.goto(DASHBOARD_URL);
+
+            // Ensure the app did NOT navigate to the dashboard
+            await expect(page).not.toHaveURL(/.*\/dashboard/);
+
+            // Ensure the app stays at the login page
+            await expect(page).toHaveURL(/.*\/login/);
         });
     });
 });
