@@ -37,7 +37,7 @@ async function logout(page: Page) {
 
 test.describe('Full User Journey E2E Test', () => {
 
-    test('Should register, log in, add product to cart, and view cart', async ({ page }) => {
+    test('Successful Case: Should register, log in, add product to cart, and view cart', async ({ page }) => {
 
         // --- 1. REGISTRATION & INITIAL LOGIN ---
         await test.step('Register a new user and verify login', async () => {
@@ -112,6 +112,48 @@ test.describe('Full User Journey E2E Test', () => {
         // --- 6. FINAL LOGOUT ---
         await test.step('Final Logout', async () => {
             await logout(page);
+        });
+    });
+
+    test('Fail Case 1: Should fail to register an existing user', async ({ page }) => {
+        await test.step('Register the test user successfully first', async () => {
+            await registerUser(page);
+
+            // registration also logging in the user so logout is needed
+            await logout(page);
+        });
+
+        // Set up a dialog listener
+        let alertMessage = '';
+        page.on('dialog', async (dialog) => {
+            alertMessage = dialog.message();
+            await dialog.dismiss();
+        });
+
+        await test.step('Attempt to register the existing test user', async () => {
+            // Navigate to the register page
+            await page.goto(REGISTER_URL);
+            await expect(page.locator('h1:has-text("Sign Up")')).toBeVisible();
+
+            // Fill the same test user data
+            await page.locator('#emailInput').fill(TEST_USER_EMAIL);
+            await page.locator('#passwordInput').fill(TEST_PASSWORD);
+            await page.locator('#confirmPasswordInput').fill(TEST_PASSWORD);
+
+            // Click the register button
+            await page.getByRole('button', { name: 'Register' }).click();
+
+            // Wait a moment for the event handler to capture the dialog
+            await page.waitForTimeout(500);
+        });
+
+        await test.step('Verify the captured alert message and failure', async () => {
+            // Check that the captured message matches the expected message from the component
+            const EXPECTED_MESSAGE = 'A user with this email is already exists!';
+            await expect(alertMessage).toBe(EXPECTED_MESSAGE);
+
+            // Ensure the app did NOT navigate to the dashboard
+            await expect(page).not.toHaveURL(/.*\/dashboard/);
         });
     });
 });
