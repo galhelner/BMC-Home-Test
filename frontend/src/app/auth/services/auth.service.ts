@@ -6,6 +6,7 @@ import * as bcrypt from 'bcryptjs';
 const AUTH_TOKEN_KEY = 'auth_token'; // Key for localStorage
 const AUTH_USER_KEY = 'auth_user'; // Key for storing authenticated user
 const REGISTERED_USERS_KEY = 'registeredUsers'; // Key for localStorage of users
+const CART_ITEMS_KEY = 'cart_items'; // Key for localStorage of cart items
 const SALT_ROUNDS = 10; // Number of salt rounds for bcrypt
 
 @Injectable({
@@ -56,6 +57,7 @@ export class AuthService {
         // Remove the token and authenticated username from storage
         localStorage.removeItem(AUTH_TOKEN_KEY);
         localStorage.removeItem(AUTH_USER_KEY);
+        localStorage.removeItem(CART_ITEMS_KEY);
     }
 
     getAuthenticatedUser(): string | null {
