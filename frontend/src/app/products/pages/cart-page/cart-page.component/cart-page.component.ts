@@ -27,11 +27,7 @@ export class CartPageComponent implements OnInit, OnDestroy {
   private initialLoadSub = new Subscription();
 
   constructor(public productsService: ProductsService) {
-    // 1. 🟢 FIX: Initialize the primary data stream from the service's *public* BehaviorSubject Observable.
-    //    This ensures all derived streams update automatically when the service's subject emits.
-    this.cartItems$ = this.productsService.cartItems$; // <-- CORRECTED ASSIGNMENT
-
-    // 2. Reactive Calculation Setup: Derive all totals from the stable cartItems$ stream.
+    this.cartItems$ = this.productsService.cartItems$;
 
     // Calculate the total number of items
     this.totalItems$ = this.cartItems$.pipe(
@@ -51,7 +47,6 @@ export class CartPageComponent implements OnInit, OnDestroy {
   }
 
   ngOnInit(): void {
-    // 3. Initial Load: Store the subscription to trigger the first API fetch 
     // and populate the service's BehaviorSubject.
     this.initialLoadSub = this.productsService.fetchAndRefreshCart().subscribe({
       error: (err) => {

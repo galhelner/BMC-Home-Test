@@ -32,7 +32,5 @@ export class ProductCardComponent {
 
 
     this.productsService.addProductToCart(this.product);
-    
-    
   }
 }

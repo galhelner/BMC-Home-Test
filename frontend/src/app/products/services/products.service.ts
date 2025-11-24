@@ -3,7 +3,6 @@ import { Product } from '../models/product';
 import { CartItem } from '../models/cart-item';
 import { HttpClient } from '@angular/common/http';
 import { AuthService } from '../../auth/services/auth.service';
-// 1. Import necessary RxJS tools
 import { Observable, BehaviorSubject, map, tap, switchMap, catchError, of } from 'rxjs'; 
 import { CartResponse } from '../models/cart-response';
 
@@ -16,17 +15,16 @@ const CART_URL = PRODUCTS_URL + '/cart';
 })
 export class ProductsService {
     
-    // 2. Central State: Private BehaviorSubject initialized with an empty array.
+    // Central State: Private BehaviorSubject initialized with an empty array.
     private _cartItemsSubject = new BehaviorSubject<CartItem[]>([]);
     
-    // 3. Public Stream: Components subscribe to this stable reference.
+    // Public Stream: Components subscribe to this stable reference.
     readonly cartItems$: Observable<CartItem[]> = this._cartItemsSubject.asObservable(); 
 
     constructor(private http: HttpClient, private authService: AuthService) { }
 
     /**
-     * 🟢 NEW LOGIC: Fetches cart data from API and pushes it to the Subject.
-     * This method is the core of the state refresh mechanism.
+     * Fetches cart data from API and pushes it to the Subject.
      */
     fetchAndRefreshCart(): Observable<CartItem[]> {
         // Use the existing logic to fetch and map the response
@@ -50,8 +48,7 @@ export class ProductsService {
     }
     
     /**
-     * Retains the original logic, now used by fetchAndRefreshCart internally.
-     * NOTE: This is kept for clarity, but you could merge it into fetchAndRefreshCart.
+     * Gets the cart items from server
      */
     getCartItems(): Observable<CartItem[]> {
         return this.http.get<CartResponse>(CART_URL).pipe(map(response => {
