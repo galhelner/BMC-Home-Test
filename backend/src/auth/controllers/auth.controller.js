@@ -1,5 +1,23 @@
 const authService = require('../services/auth.service');
 
+exports.me = async (req, res) => {
+    try {
+        const user_id = req.user.id;
+        const user = await authService.findUserById(user_id);
+
+        if (user) {
+            return res.status(200).json({ name: user.email });
+        }
+
+        console.log('here2');
+        return res.status(404).json({ message: 'User not found' });
+    } catch (err) {
+        console.error(err.message);
+        console.log('here3');
+        res.status(500).send('Server Error during rme endpoint');
+    }
+}
+
 exports.register = async (req, res) => {
     try {
         const { email, password } = req.body;

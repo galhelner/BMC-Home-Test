@@ -6,6 +6,7 @@ import { HttpClient, HttpErrorResponse } from '@angular/common/http';
 import { catchError, map, Observable, throwError, of } from 'rxjs';
 import { AuthPayload } from '../models/auth.payload';
 import { AuthResponse } from '../models/auth.response';
+import { AuthMeResponse } from '../models/auth.me';
 
 const AUTH_TOKEN_KEY = 'auth_token'; // Key for localStorage
 const AUTH_USER_KEY = 'auth_user'; // Key for storing authenticated user
@@ -15,6 +16,7 @@ const SALT_ROUNDS = 10; // Number of salt rounds for bcrypt
 const BASE_URL = 'http://localhost:3000'; // Backend server base url
 const REGISTER_URL = BASE_URL + '/auth/register';
 const LOGIN_URL = BASE_URL + '/auth/login';
+const ME_URL = BASE_URL + '/auth/me';
 
 @Injectable({
     // makes the service a singleton accessible everywhere
@@ -36,6 +38,16 @@ export class AuthService {
     getAuthToken(): Observable<string | null> {
          const token = localStorage.getItem(AUTH_TOKEN_KEY);
          return of(token);
+    }
+
+    getAuthUser(): Observable<string> {
+        return this.http.get<AuthMeResponse>(ME_URL).pipe(
+            map(response => response.name), 
+            catchError((err) => {
+                console.error("AuthService HTTP Error:", err);
+                return throwError(() => err);
+            })
+        );
     }
 
     /**
@@ -87,10 +99,6 @@ export class AuthService {
         localStorage.removeItem(AUTH_TOKEN_KEY);
         localStorage.removeItem(AUTH_USER_KEY);
         localStorage.removeItem(CART_ITEMS_KEY);
-    }
-
-    getAuthenticatedUser(): string | null {
-        return localStorage.getItem(AUTH_USER_KEY);
     }
 
     /**
