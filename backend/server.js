@@ -1,6 +1,7 @@
 const express = require('express');
 const dotenv = require('dotenv');
 const cors = require('cors');
+const path = require('path');
 const { connectDB } = require('./src/config/db');
 const { initializeMockData } = require('./src/config/loadMockProducts');
 const authRoutes = require('./src/auth/routes/auth.routes');
@@ -14,6 +15,7 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
+app.use(express.static(path.join(__dirname, 'public')));
 app.use('/auth', authRoutes);
 app.use('/products', productsRoutes);
 

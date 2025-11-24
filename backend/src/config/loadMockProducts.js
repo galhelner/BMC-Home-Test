@@ -1,12 +1,13 @@
 const { getDB } = require('./db');
+const BASE_URL = 'http://localhost:3000';
 
 const mockProducts = [
-    { id: 1, name: 'Premium Espresso Cup', price: 25.99, imageUrl: '/assets/espresso-cup.jpg' },
-    { id: 2, name: 'Organic Tea Bags', price: 15.50, imageUrl: '/assets/tea.jpg' },
-    { id: 3, name: 'Ceramic Mug Set', price: 45.00, imageUrl: '/assets/mugs.jpg' },
-    { id: 4, name: 'Milk Frother', price: 39.99, imageUrl: '/assets/frother.jpeg' },
-    { id: 5, name: 'Phone Sillicone Case', price: 5.00, imageUrl: '/assets/phone-case.jpeg' },
-    { id: 6, name: 'Basketball', price: 50.00, imageUrl: '/assets/basketball.jpg' },
+    { id: 1, name: 'Premium Espresso Cup', price: 25.99, imageUrl: `${BASE_URL}/assets/espresso-cup.jpg` },
+    { id: 2, name: 'Organic Tea Bags', price: 15.50, imageUrl: `${BASE_URL}/assets/tea.jpg` },
+    { id: 3, name: 'Ceramic Mug Set', price: 45.00, imageUrl: `${BASE_URL}/assets/mugs.jpg` },
+    { id: 4, name: 'Milk Frother', price: 39.99, imageUrl: `${BASE_URL}/assets/frother.jpeg` },
+    { id: 5, name: 'Phone Sillicone Case', price: 5.00, imageUrl: `${BASE_URL}/assets/phone-case.jpeg` },
+    { id: 6, name: 'Basketball', price: 50.00, imageUrl: `${BASE_URL}/assets/basketball.jpg` },
 ];
 
 /**
