@@ -43,12 +43,16 @@ export class RegisterFormComponent implements OnInit {
         email: this.f['email'].value,
         password: this.f['password'].value
       }
-      const result = await this.authService.registerNewUser(user);
-      if (result) {
-        this.router.navigate(['/dashboard']);
-      } else {
-        alert('A user with this email is already exists!');
-      }
+
+      this.authService.register({ email: user.email, password: user.password }).subscribe({
+        next: (token) => {
+          this.router.navigate(['/dashboard']);
+        },
+        error: (err: Error) => {
+          console.error(err.message);
+          alert(err.message);
+        }
+      });
     } else {
       this.registerForm.markAllAsTouched();
       console.log('Form is invalid');

@@ -119,13 +119,6 @@ test.describe('Full User Journey E2E Test', () => {
 
     // Fail case 1 - Attempt to register an existing user
     test('Fail Case 1: Should fail to register an existing user', async ({ page }) => {
-        await test.step('Register the test user successfully first', async () => {
-            await registerUser(page);
-
-            // registration also logging in the user so logout is needed
-            await logout(page);
-        });
-
         // Set up a dialog listener
         let alertMessage = '';
         page.on('dialog', async (dialog) => {
@@ -133,6 +126,7 @@ test.describe('Full User Journey E2E Test', () => {
             await dialog.dismiss();
         });
 
+        // user is already exists in the server db from the first test
         await test.step('Attempt to register the existing test user', async () => {
             // Navigate to the register page
             await page.goto(REGISTER_URL);
@@ -162,29 +156,27 @@ test.describe('Full User Journey E2E Test', () => {
 
     // Fail case 2 - Attempt to login to non-existing user
     test('Fail Case 2: Should fail to login to non-existing user', async ({ page }) => {
-        // Set up a dialog listener
-        let alertMessage = '';
-        page.on('dialog', async (dialog) => {
-            alertMessage = dialog.message();
-            await dialog.dismiss();
-        });
-
         // start of test -> no user is registered
         await test.step('Attempt to login to non-existing user', async () => {
              // Navigate to login page
             await page.goto(LOGIN_URL);
             await expect(page.locator('h1:has-text("Sign In")')).toBeVisible();
 
-            // fill login fields
-            await page.locator('#emailInput').fill(TEST_USER_EMAIL);
+            // fill invalid login fields
+            await page.locator('#emailInput').fill(TEST_USER_EMAIL + 'a');
             await page.locator('#passwordInput').fill(TEST_PASSWORD);
+
+            const dialogPromise = page.waitForEvent('dialog');
 
             // click login button
             await page.getByRole('button', { name: 'Log in' }).click();
 
+            const dialog = await dialogPromise;
+
             // Check that the captured message matches the expected message from the component
             const EXPECTED_MESSAGE = 'Invalid email or password';
-            await expect(alertMessage).toBe(EXPECTED_MESSAGE);
+            expect(dialog.message()).toBe(EXPECTED_MESSAGE);
+            await dialog.dismiss();
 
             // Ensure the app did NOT navigate to the dashboard
             await expect(page).not.toHaveURL(/.*\/dashboard/);

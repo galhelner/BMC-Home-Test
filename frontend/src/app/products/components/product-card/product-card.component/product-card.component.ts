@@ -17,11 +17,20 @@ export class ProductCardComponent {
   constructor(private productsService: ProductsService, private toastr: ToastrService) {}
 
   addToCart() {
+    this.productsService.addProductToCart(this.product).subscribe({
+      next: (response) => {
+        this.toastr.success(
+          `${this.product.name} has been added to your cart.`,
+          'Added to Cart',
+        );
+      },
+      error: (err) => {
+        console.error('Failed to add to cart:', err);
+        alert('Error adding item to cart. Please try again.');
+      }
+    });
+
+
     this.productsService.addProductToCart(this.product);
-    
-    this.toastr.success(
-      `${this.product.name} has been added to your cart.`, 
-      'Added to Cart',
-    );
   }
 }
